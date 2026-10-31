@@ -1,8 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Retrieve Supabase credentials from Vite environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+// Retrieve Supabase credentials from Vite environment variables (or fallbacks)
+const supabaseUrl =
+  import.meta.env.VITE_SUPABASE_URL ||
+  import.meta.env.NEXT_PUBLIC_SUPABASE_URL ||
+  'https://cocswqyvmhcblocbxvpg.supabase.co';
+
+const supabaseAnonKey =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  import.meta.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  'sb_publishable_iU4DNqjT3RZ7WxVMELsBXg_HHd2JNmJ';
 
 /**
  * Checks if Supabase has been configured with valid credentials
