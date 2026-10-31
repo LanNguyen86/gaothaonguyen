@@ -15,11 +15,11 @@ export default function Header({
 
   const navLinks = [
     { name: "Trang chủ", href: "#hero" },
-    { name: "Bảng giá & Sản phẩm", href: "#bang-gia-san-pham" },
+    { name: "Bảng giá gạo", href: "#bang-gia-san-pham" },
     { name: "Gạo Ông Cua", href: "#gao-ong-cua" },
     { name: "Tính tiền nhanh", href: "#tinh-tien-nhanh" },
-    { name: "Về chúng tôi", href: "#chinh-sach-b2b" },
-    { name: "Liên hệ", href: "#kho-hang" },
+    { name: "Chính sách sỉ", href: "#chinh-sach-b2b" },
+    { name: "Kho & Liên hệ", href: "#kho-hang" },
   ];
 
   const handleNavClick = () => {
@@ -29,53 +29,53 @@ export default function Header({
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-xs border-b border-stone-200">
       {/* Top Banner */}
-      <div className="bg-[#0d631b] text-white py-1.5 px-margin">
-        <div className="max-w-7xl mx-auto flex items-center justify-between font-label-md text-label-md">
-          <div className="flex items-center gap-2">
-            <span className="hidden md:inline font-medium">
+      <div className="bg-[#0d631b] text-white py-1.5 px-3 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex items-center justify-between text-xs sm:text-[13px] gap-2">
+          <div className="flex items-center gap-2 min-w-0 overflow-hidden">
+            <span className="truncate font-medium">
               {storeInfo.announcement || '🌾 Cam kết 100% Gạo Mới Đầu Mùa - Không Đấu Trộn - Giữ Trọn Vị Tự Nhiên'}
             </span>
-            <span className="md:hidden text-[11px] font-medium truncate max-w-[230px]">
-              {storeInfo.announcement || '🌾 Gạo mới vụ mùa thơm ngọt chuẩn vị'}
-            </span>
           </div>
-          <div className="flex items-center gap-space-lg">
+          <div className="flex items-center gap-3 shrink-0">
             <a
-              className="text-amber-300 font-label-md text-label-md hover:underline flex items-center gap-1 font-bold"
+              className="text-amber-300 hover:text-amber-200 text-xs sm:text-[13px] hover:underline flex items-center gap-1 font-bold whitespace-nowrap transition-colors"
               href={`tel:${storeInfo.hotlineClean}`}
             >
               <span className="material-symbols-outlined text-[16px]">phone_in_talk</span>
-              <span>Hotline: {storeInfo.hotline} ({storeInfo.contactPerson})</span>
+              <span>Hotline: {storeInfo.hotline}</span>
+              {storeInfo.contactPerson && (
+                <span className="hidden sm:inline">({storeInfo.contactPerson})</span>
+              )}
             </a>
           </div>
         </div>
       </div>
 
       {/* Main Navbar */}
-      <div className="h-20 max-w-7xl mx-auto px-margin flex items-center justify-between gap-space-md">
+      <div className="h-20 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 lg:gap-3 xl:gap-4">
         {/* Brand & Logo */}
-        <a href="#hero" className="flex items-center gap-3 flex-shrink-0 group cursor-pointer">
+        <a href="#hero" className="flex items-center gap-2.5 sm:gap-3 shrink-0 group cursor-pointer select-none">
           <img
             alt={storeInfo.name}
-            className="h-12 sm:h-14 w-auto object-contain transition-transform group-hover:scale-105"
+            className="h-11 sm:h-13 xl:h-14 w-auto object-contain transition-transform group-hover:scale-105 shrink-0"
             src={storeInfo.logoUrl || '/logo.png'}
           />
-          <div className="hidden sm:block">
-            <div className="font-headline-sm text-headline-sm text-[#0d631b] leading-tight tracking-tight font-serif font-bold">
+          <div className="hidden sm:flex flex-col justify-center min-w-0">
+            <div className="text-sm md:text-base lg:text-sm xl:text-lg text-[#0d631b] leading-tight tracking-tight font-serif font-bold whitespace-nowrap">
               {storeInfo.name.toUpperCase()}
             </div>
-            <div className="font-label-sm text-label-sm text-[#855300] tracking-wide font-semibold">
+            <div className="text-[10px] xl:text-xs text-[#855300] tracking-wide font-semibold whitespace-nowrap leading-snug">
               {storeInfo.slogan}
             </div>
           </div>
         </a>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-space-md font-label-lg text-label-lg">
+        <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1.5 2xl:gap-2">
           {navLinks.map((link) => (
             <a
               key={link.name}
-              className="px-3 py-1.5 text-stone-700 hover:text-[#0d631b] hover:bg-stone-100 transition-colors cursor-pointer rounded-lg font-semibold"
+              className="px-2.5 py-1.5 xl:px-3 text-[13px] xl:text-sm text-stone-700 hover:text-[#0d631b] hover:bg-stone-100 transition-colors cursor-pointer rounded-lg font-semibold whitespace-nowrap shrink-0"
               href={link.href}
             >
               {link.name}
@@ -84,11 +84,11 @@ export default function Header({
         </nav>
 
         {/* Search, Cart, Login & Actions */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Desktop Search Input */}
-          <div className="relative hidden xl:block w-44">
+        <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 shrink-0">
+          {/* Desktop Search Input (xl: 1280px+) */}
+          <div className="relative hidden xl:block w-36 2xl:w-44 shrink-0">
             <input
-              className="w-full bg-stone-50 text-stone-900 placeholder:text-stone-400 font-body-sm text-body-sm pl-8 pr-3 py-1.5 rounded-lg border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#0d631b] shadow-xs"
+              className="w-full bg-stone-50 text-stone-900 placeholder:text-stone-400 text-xs sm:text-sm pl-8 pr-3 py-1.5 rounded-lg border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#0d631b] shadow-xs"
               placeholder="Tìm loại gạo..."
               type="text"
               value={searchQuery}
@@ -99,11 +99,12 @@ export default function Header({
             </span>
           </div>
 
-          {/* Mobile Search Toggle Icon */}
+          {/* Search Toggle Icon for < xl */}
           <button
             onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-            className="xl:hidden p-2 rounded-lg text-stone-600 hover:text-[#0d631b] hover:bg-stone-100 transition-colors cursor-pointer"
+            className="xl:hidden p-2 rounded-xl text-stone-600 hover:text-[#0d631b] hover:bg-stone-100 transition-colors cursor-pointer shrink-0"
             aria-label="Tìm kiếm"
+            title="Tìm kiếm loại gạo"
           >
             <span className="material-symbols-outlined text-[22px]">search</span>
           </button>
@@ -111,13 +112,13 @@ export default function Header({
           {/* Cart / Quick Order Button */}
           <button
             onClick={onOpenCart}
-            className="relative p-2.5 rounded-xl bg-stone-100 text-[#0d631b] hover:bg-stone-200 transition-colors flex items-center justify-center cursor-pointer border border-stone-200"
+            className="relative p-2 sm:p-2.5 rounded-xl bg-stone-100 text-[#0d631b] hover:bg-stone-200 transition-colors flex items-center justify-center cursor-pointer border border-stone-200 shrink-0"
             title="Xem giỏ hàng / Đặt nhanh"
             aria-label="Giỏ hàng"
           >
-            <span className="material-symbols-outlined text-[22px]">shopping_bag</span>
+            <span className="material-symbols-outlined text-[21px] sm:text-[22px]">shopping_bag</span>
             {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-stone-950 font-label-sm text-[11px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-xs animate-pulse">
+              <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-stone-950 text-[11px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-xs animate-pulse">
                 {cartCount}
               </span>
             )}
@@ -126,14 +127,14 @@ export default function Header({
           {/* Admin Login Button */}
           <button
             onClick={onOpenLogin}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-xs border active:scale-95 ${
+            className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-xs border active:scale-95 whitespace-nowrap shrink-0 ${
               isAuthenticated
                 ? 'bg-emerald-50 text-[#0d631b] border-emerald-300 hover:bg-emerald-100'
                 : 'bg-stone-900 hover:bg-stone-800 text-white border-stone-900'
             }`}
             title={isAuthenticated ? 'Đã đăng nhập - Mở trang quản trị' : 'Đăng nhập tài khoản quản trị'}
           >
-            <span className="material-symbols-outlined text-[18px]">
+            <span className="material-symbols-outlined text-[17px] sm:text-[18px]">
               {isAuthenticated ? 'admin_panel_settings' : 'lock'}
             </span>
             <span>{isAuthenticated ? 'Vào Quản Trị' : 'Đăng Nhập'}</span>
@@ -142,7 +143,7 @@ export default function Header({
           {/* Mobile Hamburger Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl text-stone-700 hover:text-[#0d631b] hover:bg-stone-100 transition-colors cursor-pointer"
+            className="lg:hidden p-2 rounded-xl text-stone-700 hover:text-[#0d631b] hover:bg-stone-100 transition-colors cursor-pointer shrink-0"
             aria-label="Mở menu"
           >
             <span className="material-symbols-outlined text-[26px]">
@@ -181,14 +182,14 @@ export default function Header({
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-stone-200 px-margin py-5 shadow-2xl space-y-4 animate-in slide-in-from-top duration-200">
+        <div className="lg:hidden bg-white border-t border-stone-200 px-4 sm:px-6 py-5 shadow-2xl space-y-4 animate-in slide-in-from-top duration-200">
           <nav className="flex flex-col space-y-1">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
                 onClick={handleNavClick}
-                className="px-4 py-3 rounded-xl text-stone-800 font-label-lg text-label-lg hover:bg-stone-100 hover:text-[#0d631b] transition-colors flex items-center justify-between font-semibold"
+                className="px-4 py-3 rounded-xl text-stone-800 text-sm sm:text-base hover:bg-stone-100 hover:text-[#0d631b] transition-colors flex items-center justify-between font-semibold whitespace-nowrap"
               >
                 <span>{link.name}</span>
                 <span className="material-symbols-outlined text-[18px] text-stone-400">chevron_right</span>
@@ -202,7 +203,7 @@ export default function Header({
                 setMobileMenuOpen(false);
                 onOpenLogin();
               }}
-              className="w-full py-3 px-4 rounded-xl bg-stone-900 text-white font-label-lg text-label-lg flex items-center justify-center gap-2 font-bold cursor-pointer hover:bg-stone-800"
+              className="w-full py-3 px-4 rounded-xl bg-stone-900 text-white text-sm sm:text-base flex items-center justify-center gap-2 font-bold cursor-pointer hover:bg-stone-800 whitespace-nowrap shadow-xs"
             >
               <span className="material-symbols-outlined text-[20px]">
                 {isAuthenticated ? 'admin_panel_settings' : 'lock'}
@@ -212,7 +213,7 @@ export default function Header({
 
             <a
               href={`tel:${storeInfo.hotlineClean}`}
-              className="w-full py-3.5 px-4 rounded-xl bg-[#0d631b] text-white font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-xs font-bold"
+              className="w-full py-3.5 px-4 rounded-xl bg-[#0d631b] text-white text-sm sm:text-base flex items-center justify-center gap-2 shadow-xs font-bold whitespace-nowrap"
             >
               <span className="material-symbols-outlined text-[20px]">call</span>
               <span>Hotline: {storeInfo.hotline}</span>
@@ -222,7 +223,7 @@ export default function Header({
               href={storeInfo.zaloUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-3 px-4 rounded-xl bg-stone-100 text-[#855300] font-label-lg text-label-lg flex items-center justify-center gap-2 border border-stone-200 font-bold"
+              className="w-full py-3 px-4 rounded-xl bg-stone-100 text-[#855300] text-sm sm:text-base flex items-center justify-center gap-2 border border-stone-200 font-bold whitespace-nowrap hover:bg-stone-200"
             >
               <span className="material-symbols-outlined text-[20px]">chat</span>
               <span>Nhắn tin Zalo với Chị Thảo</span>
