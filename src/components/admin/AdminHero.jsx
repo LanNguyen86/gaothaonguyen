@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
+import { STORE_INFO } from '../../data/riceData';
+import ImageUploadField from './ImageUploadField';
 
 export default function AdminHero({ onShowToast }) {
   const { heroContent, updateHeroContent, storeInfo, updateStoreInfo } = useStore();
   const [formData, setFormData] = useState({ ...heroContent });
-  const [heroCookedBowlUrl, setHeroCookedBowlUrl] = useState(storeInfo.heroCookedBowlUrl || '');
+  const [heroCookedBowlUrl, setHeroCookedBowlUrl] = useState(storeInfo.heroCookedBowlUrl || STORE_INFO.heroCookedBowlUrl);
+  const [heroBgUrl, setHeroBgUrl] = useState(storeInfo.heroBgUrl || STORE_INFO.heroBgUrl);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -14,8 +17,15 @@ export default function AdminHero({ onShowToast }) {
   const handleSave = (e) => {
     e.preventDefault();
     updateHeroContent(formData);
+    const storeUpdates = {};
     if (heroCookedBowlUrl !== storeInfo.heroCookedBowlUrl) {
-      updateStoreInfo({ heroCookedBowlUrl });
+      storeUpdates.heroCookedBowlUrl = heroCookedBowlUrl;
+    }
+    if (heroBgUrl !== storeInfo.heroBgUrl) {
+      storeUpdates.heroBgUrl = heroBgUrl;
+    }
+    if (Object.keys(storeUpdates).length > 0) {
+      updateStoreInfo(storeUpdates);
     }
     if (onShowToast) onShowToast('Đã lưu nội dung Hero Banner thành công!');
   };
@@ -199,23 +209,36 @@ export default function AdminHero({ onShowToast }) {
       </div>
 
       {/* Hero Visual Card Setting */}
-      <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
+      <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-6">
         <h3 className="font-bold text-stone-900 text-base flex items-center gap-2 border-b border-stone-200 pb-3">
           <span className="material-symbols-outlined text-[#0d631b] text-[22px]">image</span>
-          <span>Khung Trưng Bày Bát Cơm & Thẻ Tiêu Chuẩn</span>
+          <span>Hình Ảnh Trưng Bày Bát Cơm & Nền Hero</span>
         </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-bold text-stone-700 mb-1">URL Ảnh Bát Cơm Nấu Chín</label>
-            <input
-              type="text"
-              value={heroCookedBowlUrl}
-              onChange={(e) => setHeroCookedBowlUrl(e.target.value)}
-              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0d631b]"
-            />
-          </div>
+        {/* 2 Image Upload Fields: Cooked Rice Bowl & Hero Background */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ImageUploadField
+            label="Ảnh Bát Cơm ST25 Nấu Chín Nổi Bật (Card lớn bên phải)"
+            value={heroCookedBowlUrl}
+            onChange={setHeroCookedBowlUrl}
+            defaultUrl={STORE_INFO.heroCookedBowlUrl}
+            folder="hero/bowl"
+            previewHeight="h-32"
+            helperText="Ảnh chụp bát cơm nóng dẻo thơm, hạt cơm ngọc trắng bóng."
+          />
 
+          <ImageUploadField
+            label="Ảnh Nền Background Hero (Hiệu ứng mờ nghệ thuật)"
+            value={heroBgUrl}
+            onChange={setHeroBgUrl}
+            defaultUrl={STORE_INFO.heroBgUrl}
+            folder="hero/bg"
+            previewHeight="h-32"
+            helperText="Ảnh cánh đồng lúa hoặc bao gạo tạo chiều sâu nghệ thuật phía sau."
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
           <div>
             <label className="block text-xs font-bold text-stone-700 mb-1">Huy hiệu vàng trên ảnh</label>
             <input
@@ -226,9 +249,7 @@ export default function AdminHero({ onShowToast }) {
               className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0d631b]"
             />
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-bold text-stone-700 mb-1">Tên gạo trên ảnh</label>
             <input

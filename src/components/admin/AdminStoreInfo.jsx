@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
+import { STORE_INFO } from '../../data/riceData';
+import ImageUploadField from './ImageUploadField';
 
 export default function AdminStoreInfo({ onShowToast }) {
   const { storeInfo, updateStoreInfo } = useStore();
@@ -38,62 +40,59 @@ export default function AdminStoreInfo({ onShowToast }) {
       </div>
 
       {/* Brand Identity Card */}
-      <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
+      <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-5">
         <h3 className="font-bold text-stone-900 text-base flex items-center gap-2 border-b border-stone-200 pb-3">
           <span className="material-symbols-outlined text-[#0d631b] text-[22px]">badge</span>
           <span>Nhận Diện Thương Hiệu & Logo</span>
         </h3>
 
-        <div className="flex flex-col sm:flex-row items-center gap-6 pt-2">
-          {/* Logo Preview */}
-          <div className="flex flex-col items-center space-y-2">
-            <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-emerald-300 p-1 flex items-center justify-center bg-stone-50 shadow-xs overflow-hidden">
-              <img
-                src={formData.logoUrl || '/logo.png'}
-                alt="Logo Vựa Gạo Thảo Nguyên"
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <span className="text-xs text-stone-500 font-medium">Logo hiện hành</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold text-stone-700 mb-1">Tên Vựa Gạo *</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name || ''}
+              onChange={handleChange}
+              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0d631b] font-bold"
+            />
           </div>
 
-          <div className="flex-1 w-full space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold text-stone-700 mb-1">Tên Vựa Gạo *</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name || ''}
-                  onChange={handleChange}
-                  className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0d631b] font-bold"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-stone-700 mb-1">Slogan Thương Hiệu</label>
-                <input
-                  type="text"
-                  name="slogan"
-                  value={formData.slogan || ''}
-                  onChange={handleChange}
-                  className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0d631b]"
-                  placeholder="Gạo ngon – Chất lượng – Trọn niềm tin"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-stone-700 mb-1">Đường dẫn tệp Logo (URL hoặc /logo.png)</label>
-              <input
-                type="text"
-                name="logoUrl"
-                value={formData.logoUrl || ''}
-                onChange={handleChange}
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0d631b]"
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-bold text-stone-700 mb-1">Slogan Thương Hiệu</label>
+            <input
+              type="text"
+              name="slogan"
+              value={formData.slogan || ''}
+              onChange={handleChange}
+              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0d631b]"
+              placeholder="Gạo ngon – Chất lượng – Trọn niềm tin"
+            />
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+          {/* Logo Upload Field */}
+          <ImageUploadField
+            label="Logo Thương Hiệu Vựa Gạo (Hiển thị Header & Footer)"
+            value={formData.logoUrl || '/logo.png'}
+            onChange={(newUrl) => setFormData((prev) => ({ ...prev, logoUrl: newUrl }))}
+            defaultUrl="/logo.png"
+            folder="store/logo"
+            previewHeight="h-28"
+            helperText="Khuyên dùng ảnh logo PNG nền trong suốt hoặc JPG rõ nét."
+          />
+
+          {/* Owner / Consultant Avatar Upload Field */}
+          <ImageUploadField
+            label="Ảnh Đại Diện Chủ Vựa / Người Phụ Trách Tư Vấn"
+            value={formData.ownerAvatarUrl || STORE_INFO.ownerAvatarUrl}
+            onChange={(newUrl) => setFormData((prev) => ({ ...prev, ownerAvatarUrl: newUrl }))}
+            defaultUrl={STORE_INFO.ownerAvatarUrl}
+            folder="store/avatar"
+            previewHeight="h-28"
+            helperText="Ảnh chân dung tạo độ tin cậy và ấm áp cho khách hàng đặt gạo."
+          />
         </div>
       </div>
 

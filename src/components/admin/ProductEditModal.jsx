@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ImageUploadField from './ImageUploadField';
 
 export default function ProductEditModal({ product, isOpen, onClose, onSave }) {
   const [formData, setFormData] = useState({
@@ -208,28 +209,28 @@ export default function ProductEditModal({ product, isOpen, onClose, onSave }) {
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block font-bold text-stone-900 mb-1">Xuất xứ / Vùng trồng</label>
-              <input
-                type="text"
-                value={formData.origin}
-                onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-[#0d631b] focus:outline-none"
-                placeholder="VD: Sóc Trăng / Long An / Tiền Giang"
-              />
-            </div>
+          <div>
+            <label className="block font-bold text-stone-900 mb-1">Xuất xứ / Vùng trồng</label>
+            <input
+              type="text"
+              value={formData.origin}
+              onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
+              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-[#0d631b] focus:outline-none"
+              placeholder="VD: Sóc Trăng / Long An / Tiền Giang"
+            />
+          </div>
 
-            <div>
-              <label className="block font-bold text-stone-900 mb-1">Đường dẫn ảnh gạo (URL)</label>
-              <input
-                type="text"
-                value={formData.imageUrl}
-                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-[#0d631b] focus:outline-none"
-                placeholder="Link ảnh hoặc /logo.png"
-              />
-            </div>
+          {/* Product Image Upload Field */}
+          <div>
+            <ImageUploadField
+              label="Hình Ảnh Loại Gạo (Hiển thị tại Catalog & Chi tiết)"
+              value={formData.imageUrl}
+              onChange={(newUrl) => setFormData((prev) => ({ ...prev, imageUrl: newUrl }))}
+              defaultUrl={product?.imageUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCgNx_DMD24PnqYVFxm3xJKAozO9ApO-HvO18TpF2HyVRuPBMsIebEbQ5iybw6JYn2mZHXHomhcNbDTOorc5RhKJoKzmsieHO2Mb5untARzothGTTOMKheVSHA5K464eLc6DsrkAkoCUXvMl3x8O1oPrsL2-66YgfgdVTSmEiUgzz3CeqPrQhXWvBN0oT6KQ1XtZy4lIWHpZrCKmlUHApmk4iUGXLcSo4vKqVqcGV4E'}
+              folder="products"
+              previewHeight="h-32"
+              helperText="Khuyên dùng ảnh chụp cận hạt gạo hoặc bao bì sắc nét (tỉ lệ 4:3 hoặc 1:1)."
+            />
           </div>
 
           {/* Categories */}

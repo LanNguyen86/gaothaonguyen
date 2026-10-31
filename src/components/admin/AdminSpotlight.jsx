@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
+import { STORE_INFO } from '../../data/riceData';
+import ImageUploadField from './ImageUploadField';
 
 export default function AdminSpotlight({ onShowToast }) {
   const { spotlightST25, updateSpotlightST25, storeInfo, updateStoreInfo } = useStore();
   const [formData, setFormData] = useState({ ...spotlightST25 });
-  const [bagUrl, setBagUrl] = useState(storeInfo.spotlightSt25BagUrl || '');
+  const [bagUrl, setBagUrl] = useState(storeInfo.spotlightSt25BagUrl || STORE_INFO.spotlightSt25BagUrl);
   const [newPackaging, setNewPackaging] = useState('');
 
   const handleChange = (e) => {
@@ -266,28 +268,29 @@ export default function AdminSpotlight({ onShowToast }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-          <div>
-            <label className="block text-xs font-bold text-stone-700 mb-1">Giá niêm yết ST25 Lúa Tôm (đ/kg)</label>
-            <input
-              type="number"
-              step="500"
-              name="priceRetail"
-              value={formData.priceRetail}
-              onChange={handleChange}
-              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2 text-sm text-[#0d631b] font-bold focus:outline-none focus:ring-2 focus:ring-[#0d631b]"
-            />
-          </div>
+        <div className="pt-2">
+          <label className="block text-xs font-bold text-stone-700 mb-1">Giá niêm yết ST25 Lúa Tôm (đ/kg)</label>
+          <input
+            type="number"
+            step="500"
+            name="priceRetail"
+            value={formData.priceRetail}
+            onChange={handleChange}
+            className="w-full sm:w-72 bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2 text-sm text-[#0d631b] font-bold focus:outline-none focus:ring-2 focus:ring-[#0d631b]"
+          />
+        </div>
 
-          <div>
-            <label className="block text-xs font-bold text-stone-700 mb-1">URL Ảnh Bao Bì ST25</label>
-            <input
-              type="text"
-              value={bagUrl}
-              onChange={(e) => setBagUrl(e.target.value)}
-              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0d631b]"
-            />
-          </div>
+        {/* ST25 Bag Image Upload Field */}
+        <div className="pt-2">
+          <ImageUploadField
+            label="Ảnh Bao Bì ST25 Sóc Trăng Chính Hãng (Card nổi bật bên phải)"
+            value={bagUrl}
+            onChange={setBagUrl}
+            defaultUrl={STORE_INFO.spotlightSt25BagUrl}
+            folder="spotlight/st25"
+            previewHeight="h-40"
+            helperText="Ảnh chụp bao bì ST25 sắc nét, có logo thương hiệu Ông Cua và tem chống giả."
+          />
         </div>
       </div>
     </form>

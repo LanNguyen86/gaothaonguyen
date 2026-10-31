@@ -479,3 +479,49 @@ VALUES
 ON CONFLICT (key) DO UPDATE SET
     content = EXCLUDED.content,
     updated_at = NOW();
+
+-- ==============================================================================
+-- 4. KHO LƯU TRỮ HÌNH ẢNH (SUPABASE STORAGE BUCKET 'images')
+-- ==============================================================================
+
+-- Tạo bucket 'images' công khai cho phép lưu ảnh sản phẩm, logo, banner
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+    'images',
+    'images',
+    true,
+    10485760, -- Tối đa 10MB
+    ARRAY['image/png', 'image/jpeg', 'image/webp', 'image/gif']
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- Cho phép mọi người xem ảnh công khai
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname = 'Public Access Images'
+    ) THEN
+        CREATE POLICY "Public Access Images" ON storage.objects FOR SELECT USING (bucket_id = 'images');
+    END IF;
+END $$;
+
+-- Cho phép upload ảnh lên bucket 'images'
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname = 'Public Upload Images'
+    ) THEN
+        CREATE POLICY "Public Upload Images" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'images');
+    END IF;
+END $$;
+
+-- Cho phép ghi đè / cập nhật ảnh trong bucket 'images'
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname = 'Public Update Images'
+    ) THEN
+        CREATE POLICY "Public Update Images" ON storage.objects FOR UPDATE USING (bucket_id = 'images');
+    END IF;
+END $$;
+
