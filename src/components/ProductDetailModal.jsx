@@ -67,6 +67,10 @@ export default function ProductDetailModal({ product, onClose, onCalculate, onQu
                 src={product.imageUrl}
                 alt={product.name}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/logo.png';
+                }}
               />
               <span className="absolute top-2 left-2 px-2.5 py-1 rounded bg-amber-500 text-stone-950 font-label-sm text-label-sm font-extrabold shadow-sm">
                 {product.badge}

@@ -16,6 +16,10 @@ export default function Footer() {
                 alt={storeInfo.name}
                 className="h-10 w-auto object-contain"
                 src={storeInfo.logoUrl || '/logo.png'}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/logo.png';
+                }}
               />
               <span className="font-headline-sm text-headline-sm text-[#0d631b] font-serif font-bold">
                 {storeInfo.name}

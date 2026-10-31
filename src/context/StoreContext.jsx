@@ -42,13 +42,28 @@ export function StoreProvider({ children }) {
         if (!storeInfoMerged.logoUrl || storeInfoMerged.logoUrl.includes('googleusercontent')) {
           storeInfoMerged.logoUrl = '/logo.png';
         }
+        if (!storeInfoMerged.heroBgUrl) storeInfoMerged.heroBgUrl = INITIAL_STORE_INFO.heroBgUrl;
+        if (!storeInfoMerged.heroCookedBowlUrl) storeInfoMerged.heroCookedBowlUrl = INITIAL_STORE_INFO.heroCookedBowlUrl;
+        if (!storeInfoMerged.spotlightSt25BagUrl) storeInfoMerged.spotlightSt25BagUrl = INITIAL_STORE_INFO.spotlightSt25BagUrl;
+        if (!storeInfoMerged.ownerAvatarUrl) storeInfoMerged.ownerAvatarUrl = INITIAL_STORE_INFO.ownerAvatarUrl;
+
+        const productsMerged = Array.isArray(parsed.products) && parsed.products.length > 0
+          ? parsed.products.map((p) => {
+              const fallbackP = INITIAL_PRODUCTS.find((ip) => ip.id === p.id);
+              const isValidImg = p.imageUrl && typeof p.imageUrl === 'string' && p.imageUrl.startsWith('http') && p.imageUrl.length > 40;
+              return {
+                ...p,
+                imageUrl: isValidImg ? p.imageUrl : (fallbackP?.imageUrl || '/logo.png'),
+              };
+            })
+          : INITIAL_PRODUCTS;
 
         return {
           storeInfo: storeInfoMerged,
           heroContent: { ...INITIAL_HERO_CONTENT, ...parsed.heroContent },
           trustBadges: parsed.trustBadges || INITIAL_TRUST_BADGES,
           spotlightST25: { ...INITIAL_SPOTLIGHT_ST25, ...parsed.spotlightST25 },
-          products: parsed.products || INITIAL_PRODUCTS,
+          products: productsMerged,
           calculatorConfig: { ...INITIAL_CALCULATOR_CONFIG, ...parsed.calculatorConfig },
           b2bContent: { ...INITIAL_B2B_CONTENT, ...parsed.b2bContent },
           warehouseContent: warehouseMerged,
@@ -90,24 +105,81 @@ export function StoreProvider({ children }) {
         ]);
 
         if (prodRes.success && Array.isArray(prodRes.data) && prodRes.data.length > 0) {
-          const mappedProducts = prodRes.data.map((p) => ({
-            ...p,
-            desc: p.desc_text || p.desc,
-            imageUrl: p.image_url || p.imageUrl,
-            packagingSnippet: p.packaging_snippet || p.packagingSnippet,
-            textureBadge: p.texture_badge || p.textureBadge,
-            badgeType: p.badge_type || p.badgeType,
-            waterRatio: p.water_ratio || p.waterRatio,
-            suitableFor: p.suitable_for || p.suitableFor,
-          }));
+          const mappedProducts = prodRes.data.map((p) => {
+            const fallbackP = INITIAL_PRODUCTS.find((ip) => ip.id === p.id);
+            const rawImg = p.image_url || p.imageUrl;
+            const isValidImg = rawImg && typeof rawImg === 'string' && rawImg.startsWith('http') && rawImg.length > 40;
+            return {
+              ...p,
+              desc: p.desc_text || p.desc || fallbackP?.desc || '',
+              imageUrl: isValidImg ? rawImg : (fallbackP?.imageUrl || '/logo.png'),
+              packagingSnippet: p.packaging_snippet || p.packagingSnippet || fallbackP?.packagingSnippet || '',
+              textureBadge: p.texture_badge || p.textureBadge || fallbackP?.textureBadge || '',
+              badgeType: p.badge_type || p.badgeType || fallbackP?.badgeType || 'default',
+              waterRatio: p.water_ratio || p.waterRatio || fallbackP?.waterRatio || '',
+              suitableFor: p.suitable_for || p.suitableFor || fallbackP?.suitableFor || '',
+            };
+          });
           setData((prev) => ({ ...prev, products: mappedProducts }));
         }
 
         if (settingsRes.success && settingsRes.data) {
-          setData((prev) => ({
-            ...prev,
-            ...settingsRes.data,
-          }));
+          setData((prev) => {
+            const cloudStoreInfo = settingsRes.data.storeInfo || {};
+            const mergedStoreInfo = {
+              ...INITIAL_STORE_INFO,
+              ...prev.storeInfo,
+              ...cloudStoreInfo,
+              // Always guarantee essential imagery
+              heroBgUrl: cloudStoreInfo.heroBgUrl || prev.storeInfo?.heroBgUrl || INITIAL_STORE_INFO.heroBgUrl,
+              heroCookedBowlUrl: cloudStoreInfo.heroCookedBowlUrl || prev.storeInfo?.heroCookedBowlUrl || INITIAL_STORE_INFO.heroCookedBowlUrl,
+              spotlightSt25BagUrl: cloudStoreInfo.spotlightSt25BagUrl || prev.storeInfo?.spotlightSt25BagUrl || INITIAL_STORE_INFO.spotlightSt25BagUrl,
+              ownerAvatarUrl: cloudStoreInfo.ownerAvatarUrl || prev.storeInfo?.ownerAvatarUrl || INITIAL_STORE_INFO.ownerAvatarUrl,
+              logoUrl: cloudStoreInfo.logoUrl || prev.storeInfo?.logoUrl || '/logo.png',
+            };
+
+            const mergedHero = {
+              ...INITIAL_HERO_CONTENT,
+              ...prev.heroContent,
+              ...(settingsRes.data.heroContent || {}),
+            };
+
+            const mergedSpotlight = {
+              ...INITIAL_SPOTLIGHT_ST25,
+              ...prev.spotlightST25,
+              ...(settingsRes.data.spotlightST25 || {}),
+            };
+
+            const mergedTrust = settingsRes.data.trustBadges || prev.trustBadges || INITIAL_TRUST_BADGES;
+            const mergedCalc = {
+              ...INITIAL_CALCULATOR_CONFIG,
+              ...prev.calculatorConfig,
+              ...(settingsRes.data.calculatorConfig || {}),
+            };
+            const mergedB2B = {
+              ...INITIAL_B2B_CONTENT,
+              ...prev.b2bContent,
+              ...(settingsRes.data.b2bContent || {}),
+            };
+            const mergedWarehouse = {
+              ...INITIAL_WAREHOUSE_CONTENT,
+              ...prev.warehouseContent,
+              ...(settingsRes.data.warehouseContent || {}),
+              googleMapsEmbed: INITIAL_WAREHOUSE_CONTENT.googleMapsEmbed,
+              address: INITIAL_WAREHOUSE_CONTENT.address,
+            };
+
+            return {
+              ...prev,
+              storeInfo: mergedStoreInfo,
+              heroContent: mergedHero,
+              spotlightST25: mergedSpotlight,
+              trustBadges: mergedTrust,
+              calculatorConfig: mergedCalc,
+              b2bContent: mergedB2B,
+              warehouseContent: mergedWarehouse,
+            };
+          });
         }
       } catch (err) {
         console.warn('Supabase initial sync error:', err);

@@ -208,6 +208,10 @@ export default function RiceCatalog({ onQuickCalculate, onQuickOrder, onSelectDe
                     alt={rice.name}
                     src={rice.imageUrl}
                     loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/logo.png';
+                    }}
                   />
                   {rice.textureBadge && (
                     <span className="absolute bottom-2 left-2 px-2.5 py-1 rounded bg-white/95 font-label-sm text-label-sm text-stone-900 font-bold backdrop-blur-sm shadow-xs border border-stone-200">

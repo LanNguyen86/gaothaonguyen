@@ -130,6 +130,10 @@ export default function AdminProducts({ onShowToast }) {
                         src={rice.imageUrl}
                         alt={rice.name}
                         className="w-12 h-12 rounded-xl object-cover border border-stone-200 shrink-0"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = '/logo.png';
+                        }}
                       />
                       <div>
                         <div className="font-bold text-stone-900">{rice.name}</div>

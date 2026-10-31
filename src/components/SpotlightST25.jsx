@@ -1,8 +1,10 @@
 import React from 'react';
 import { useStore } from '../context/StoreContext';
+import { STORE_INFO } from '../data/riceData';
 
 export default function SpotlightST25({ onSelectRiceForCalculator }) {
   const { spotlightST25, storeInfo } = useStore();
+  const st25BagImg = storeInfo?.spotlightSt25BagUrl || STORE_INFO.spotlightSt25BagUrl;
 
   const handleCalcClick = (e) => {
     e.preventDefault();
@@ -104,7 +106,11 @@ export default function SpotlightST25({ onSelectRiceForCalculator }) {
                 <img
                   className="w-full h-full object-cover"
                   alt="Bao bì chính hãng Gạo ST25 Ông Cua Sóc Trăng"
-                  src={storeInfo.spotlightSt25BagUrl}
+                  src={st25BagImg}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = STORE_INFO.spotlightSt25BagUrl;
+                  }}
                 />
                 <span className="absolute top-3 left-3 bg-amber-500 text-stone-950 px-3 py-1 rounded-full font-label-sm text-label-sm font-extrabold shadow-md">
                   CHÍNH HIỆU SÓC TRĂNG

@@ -1,8 +1,11 @@
 import React from 'react';
 import { useStore } from '../context/StoreContext';
+import { STORE_INFO } from '../data/riceData';
 
 export default function Hero() {
   const { heroContent, storeInfo } = useStore();
+  const heroBg = storeInfo?.heroBgUrl || STORE_INFO.heroBgUrl;
+  const heroBowl = storeInfo?.heroCookedBowlUrl || STORE_INFO.heroCookedBowlUrl;
 
   return (
     <section id="hero" className="relative w-full overflow-hidden bg-gradient-to-b from-stone-50 via-white to-stone-50 pt-28 pb-16 lg:pb-24">
@@ -10,7 +13,7 @@ export default function Hero() {
       <div className="absolute inset-0 z-0">
         <div
           className="w-full h-full bg-cover bg-center opacity-15 scale-105 transform duration-1000 ease-out"
-          style={{ backgroundImage: `url('${storeInfo.heroBgUrl}')` }}
+          style={{ backgroundImage: `url('${heroBg}')` }}
         ></div>
         <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/95 to-white"></div>
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-emerald-100/60 blur-3xl pointer-events-none"></div>
@@ -98,7 +101,11 @@ export default function Hero() {
                   <img
                     className="w-full h-full object-cover"
                     alt={heroContent.cardTitle}
-                    src={storeInfo.heroCookedBowlUrl}
+                    src={heroBowl}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = STORE_INFO.heroCookedBowlUrl;
+                    }}
                   />
                   {/* High contrast gradient: dark at bottom so white text is always sharp */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent"></div>

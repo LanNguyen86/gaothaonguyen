@@ -155,6 +155,10 @@ export default function AdminOverview({ setActiveTab, onShowToast }) {
                           src={rice.imageUrl}
                           alt={rice.name}
                           className="w-9 h-9 rounded-lg object-cover border border-stone-200"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = '/logo.png';
+                          }}
                         />
                         <span>{rice.name}</span>
                       </div>

@@ -57,6 +57,10 @@ export default function Header({
             alt={storeInfo.name}
             className="h-9 sm:h-12 xl:h-14 w-auto object-contain transition-transform group-hover:scale-105 shrink-0"
             src={storeInfo.logoUrl || '/logo.png'}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = '/logo.png';
+            }}
           />
           <div className="flex flex-col justify-center min-w-0">
             <div className="text-[13px] sm:text-sm md:text-base lg:text-sm xl:text-lg text-[#0d631b] leading-tight tracking-tight font-serif font-bold whitespace-nowrap">
