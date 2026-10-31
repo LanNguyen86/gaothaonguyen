@@ -55,12 +55,12 @@ export default function Header({
         <a href="#hero" className="flex items-center gap-2 sm:gap-2.5 shrink-0 group cursor-pointer select-none">
           <img
             alt={storeInfo.name}
-            className="h-10 sm:h-12 xl:h-14 w-auto object-contain transition-transform group-hover:scale-105 shrink-0"
+            className="h-9 sm:h-12 xl:h-14 w-auto object-contain transition-transform group-hover:scale-105 shrink-0"
             src={storeInfo.logoUrl || '/logo.png'}
           />
-          <div className="hidden sm:flex flex-col justify-center min-w-0">
-            <div className="text-xs sm:text-sm md:text-base lg:text-sm xl:text-lg text-[#0d631b] leading-tight tracking-tight font-serif font-bold whitespace-nowrap">
-              {storeInfo.name.toUpperCase()}
+          <div className="flex flex-col justify-center min-w-0">
+            <div className="text-[13px] sm:text-sm md:text-base lg:text-sm xl:text-lg text-[#0d631b] leading-tight tracking-tight font-serif font-bold whitespace-nowrap">
+              {storeInfo.name}
             </div>
             <div className="text-[10px] xl:text-xs text-[#855300] tracking-wide font-semibold whitespace-nowrap leading-snug hidden xl:block">
               {storeInfo.slogan}
