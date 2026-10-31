@@ -16,6 +16,18 @@ import Toast from './components/Toast';
 import AdminDashboard from './components/admin/AdminDashboard';
 import AdminLoginModal from './components/admin/AdminLoginModal';
 
+function checkIsAdminRoute() {
+  const hash = (window.location.hash || '').toLowerCase();
+  const path = (window.location.pathname || '').toLowerCase();
+  return (
+    hash === '#admin' ||
+    hash.startsWith('#admin') ||
+    path === '/admin' ||
+    path === '/admin/' ||
+    path.startsWith('/admin')
+  );
+}
+
 function MainApp() {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
     try {
@@ -28,14 +40,20 @@ function MainApp() {
     }
   });
 
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(() => {
+    const isAuthed = Boolean(
+      localStorage.getItem('thao_nguyen_admin_logged_in') ||
+      sessionStorage.getItem('thao_nguyen_admin_logged_in')
+    );
+    return checkIsAdminRoute() && !isAuthed;
+  });
 
   const [viewMode, setViewMode] = useState(() => {
     const isAuthed = Boolean(
       localStorage.getItem('thao_nguyen_admin_logged_in') ||
       sessionStorage.getItem('thao_nguyen_admin_logged_in')
     );
-    return window.location.hash === '#admin' && isAuthed ? 'admin' : 'landing';
+    return checkIsAdminRoute() && isAuthed ? 'admin' : 'landing';
   });
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,12 +64,14 @@ function MainApp() {
   const [orderProduct, setOrderProduct] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
 
-  // Handle hash changes for #admin with authentication guard
+  // Handle route & hash changes for direct admin access link (#admin or /admin)
   useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash === '#admin') {
+    const handleRouteChange = () => {
+      const isAdm = checkIsAdminRoute();
+      if (isAdm) {
         if (isAdminAuthenticated) {
           setViewMode('admin');
+          setIsLoginModalOpen(false);
         } else {
           setViewMode('landing');
           setIsLoginModalOpen(true);
@@ -61,14 +81,30 @@ function MainApp() {
       }
     };
 
-    // If loaded initially with #admin and not authed, prompt login
-    if (window.location.hash === '#admin' && !isAdminAuthenticated) {
-      setIsLoginModalOpen(true);
-    }
-
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('hashchange', handleRouteChange);
+    window.addEventListener('popstate', handleRouteChange);
+    return () => {
+      window.removeEventListener('hashchange', handleRouteChange);
+      window.removeEventListener('popstate', handleRouteChange);
+    };
   }, [isAdminAuthenticated, viewMode]);
+
+  // Secret shortcut: Ctrl + Shift + A or Cmd + Shift + A to open admin login
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        if (isAdminAuthenticated) {
+          window.location.hash = '#admin';
+          setViewMode('admin');
+        } else {
+          setIsLoginModalOpen(true);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isAdminAuthenticated]);
 
   const showToast = (message) => {
     setToastMessage(message);
@@ -103,20 +139,11 @@ function MainApp() {
     setIsQuickOrderOpen(true);
   };
 
-  const handleOpenLogin = () => {
-    if (isAdminAuthenticated) {
-      window.location.hash = '#admin';
-      setViewMode('admin');
-    } else {
-      setIsLoginModalOpen(true);
-    }
-  };
-
   const handleLoginSuccess = () => {
     setIsAdminAuthenticated(true);
     setViewMode('admin');
     window.location.hash = '#admin';
-    showToast('Đăng nhập hệ thống quản trị thành công!');
+    showToast('Xác thực quyền quản trị thành công!');
   };
 
   const handleLogout = () => {
@@ -128,14 +155,36 @@ function MainApp() {
     }
     setIsAdminAuthenticated(false);
     setViewMode('landing');
-    window.location.hash = '';
+    if (window.location.hash === '#admin') {
+      window.location.hash = '';
+    }
+    if (window.location.pathname.startsWith('/admin')) {
+      window.history.replaceState(null, '', '/');
+    }
     showToast('Đã đăng xuất khỏi tài khoản quản trị!');
   };
 
   const handleExitAdmin = () => {
-    window.location.hash = '';
+    if (window.location.hash === '#admin') {
+      window.location.hash = '';
+    }
+    if (window.location.pathname.startsWith('/admin')) {
+      window.history.pushState(null, '', '/');
+    }
     setViewMode('landing');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
+    if (checkIsAdminRoute() && !isAdminAuthenticated) {
+      if (window.location.hash === '#admin') {
+        window.location.hash = '';
+      }
+      if (window.location.pathname.startsWith('/admin')) {
+        window.history.replaceState(null, '', '/');
+      }
+    }
   };
 
   return (
@@ -154,14 +203,12 @@ function MainApp() {
         />
       ) : (
         <>
-          {/* Header & Sticky Nav */}
+          {/* Header & Sticky Nav (Client mode - Clean navigation) */}
           <Header
             cartCount={cartCount}
             searchQuery={searchQuery}
             onSearch={handleSearch}
             onOpenCart={() => handleOpenQuickOrder(null)}
-            onOpenLogin={handleOpenLogin}
-            isAuthenticated={isAdminAuthenticated}
           />
 
           {/* Main Content Area with Header Spacing */}
@@ -199,7 +246,7 @@ function MainApp() {
           </main>
 
           {/* Footer */}
-          <Footer onOpenAdmin={handleOpenLogin} />
+          <Footer />
 
           {/* Floating Action Buttons (Phone & Zalo & Scroll Top) */}
           <FloatingContactBar />
@@ -227,12 +274,7 @@ function MainApp() {
       {/* Admin Login Modal */}
       <AdminLoginModal
         isOpen={isLoginModalOpen}
-        onClose={() => {
-          setIsLoginModalOpen(false);
-          if (window.location.hash === '#admin' && !isAdminAuthenticated) {
-            window.location.hash = '';
-          }
-        }}
+        onClose={handleCloseLoginModal}
         onLoginSuccess={handleLoginSuccess}
       />
     </div>

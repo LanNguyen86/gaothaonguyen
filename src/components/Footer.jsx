@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStore } from '../context/StoreContext';
 
-export default function Footer({ onOpenAdmin }) {
+export default function Footer() {
   const { storeInfo } = useStore();
 
   return (
@@ -72,7 +72,7 @@ export default function Footer({ onOpenAdmin }) {
           {/* Col 4: Trust & Payment */}
           <div className="space-y-space-sm">
             <div className="font-headline-sm text-headline-sm text-stone-900 font-serif font-bold">
-              Cam Kết & Quản Trị
+              Cam Kết & Thanh Toán
             </div>
             <div className="bg-white p-space-md rounded-xl shadow-xs space-y-space-xs border border-stone-200">
               <div className="flex items-center gap-2 font-label-md text-label-md text-[#0d631b] font-bold">
@@ -87,18 +87,6 @@ export default function Footer({ onOpenAdmin }) {
               <div className="flex items-center gap-2 flex-wrap text-stone-700 font-label-sm text-label-sm">
                 <span className="px-2.5 py-1 bg-white border border-stone-200 rounded-md font-medium">Tiền mặt khi nhận gạo</span>
                 <span className="px-2.5 py-1 bg-white border border-stone-200 rounded-md font-medium">Chuyển khoản QR 24/7</span>
-              </div>
-
-              {/* CMS Admin Link */}
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={onOpenAdmin}
-                  className="inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-[#0d631b] font-semibold cursor-pointer transition-colors"
-                >
-                  <span className="material-symbols-outlined text-[16px]">admin_panel_settings</span>
-                  <span>Đăng nhập trang quản trị (CMS)</span>
-                </button>
               </div>
             </div>
           </div>

@@ -6,8 +6,6 @@ export default function Header({
   onSearch,
   searchQuery = '',
   onOpenCart,
-  onOpenLogin,
-  isAuthenticated = false,
 }) {
   const { storeInfo } = useStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -83,8 +81,8 @@ export default function Header({
           ))}
         </nav>
 
-        {/* Search, Cart, Login & Actions */}
-        <div className="flex items-center gap-1 sm:gap-2 xl:gap-2.5 shrink-0">
+        {/* Search, Cart & Mobile Actions */}
+        <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 shrink-0">
           {/* Desktop Search Input (xl: 1280px+) */}
           <div className="relative hidden xl:block w-36 2xl:w-44 shrink-0">
             <input
@@ -122,24 +120,6 @@ export default function Header({
                 {cartCount}
               </span>
             )}
-          </button>
-
-          {/* Admin Login Button - compact icon on mobile, full text on sm+ */}
-          <button
-            onClick={onOpenLogin}
-            className={`inline-flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 md:px-3.5 md:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-xs border active:scale-95 whitespace-nowrap shrink-0 ${
-              isAuthenticated
-                ? 'bg-emerald-50 text-[#0d631b] border-emerald-300 hover:bg-emerald-100'
-                : 'bg-stone-900 hover:bg-stone-800 text-white border-stone-900'
-            }`}
-            title={isAuthenticated ? 'Đã đăng nhập - Mở trang quản trị' : 'Đăng nhập tài khoản quản trị'}
-          >
-            <span className="material-symbols-outlined text-[18px] sm:text-[19px]">
-              {isAuthenticated ? 'admin_panel_settings' : 'lock'}
-            </span>
-            <span className="hidden sm:inline">
-              {isAuthenticated ? 'Vào Quản Trị' : 'Đăng Nhập'}
-            </span>
           </button>
 
           {/* Mobile Hamburger Toggle Button */}
@@ -200,19 +180,6 @@ export default function Header({
           </nav>
 
           <div className="pt-3 border-t border-stone-200 flex flex-col gap-2.5">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenLogin();
-              }}
-              className="w-full py-3 px-4 rounded-xl bg-stone-900 text-white text-sm sm:text-base flex items-center justify-center gap-2 font-bold cursor-pointer hover:bg-stone-800 whitespace-nowrap shadow-xs"
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                {isAuthenticated ? 'admin_panel_settings' : 'lock'}
-              </span>
-              <span>{isAuthenticated ? 'Mở Trang Quản Trị CMS' : 'Đăng Nhập Quản Trị'}</span>
-            </button>
-
             <a
               href={`tel:${storeInfo.hotlineClean}`}
               className="w-full py-3.5 px-4 rounded-xl bg-[#0d631b] text-white text-sm sm:text-base flex items-center justify-center gap-2 shadow-xs font-bold whitespace-nowrap"
