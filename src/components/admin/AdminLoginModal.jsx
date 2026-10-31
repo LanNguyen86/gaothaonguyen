@@ -67,23 +67,23 @@ export default function AdminLoginModal({ isOpen, onClose, onLoginSuccess }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex min-h-full items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200"
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-stone-200 overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-stone-200 overflow-hidden animate-in zoom-in-95 duration-200 my-auto flex flex-col max-h-[calc(100dvh-2rem)]">
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-950 via-[#0a4d15] to-[#0d631b] text-white p-6 relative text-center">
+        <div className="bg-gradient-to-r from-emerald-950 via-[#0a4d15] to-[#0d631b] text-white p-4 sm:p-5 relative text-center shrink-0">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center transition-colors cursor-pointer"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center transition-colors cursor-pointer"
             aria-label="Đóng cửa sổ"
           >
             <span className="material-symbols-outlined text-[18px]">close</span>
           </button>
 
-          <div className="w-16 h-16 rounded-full bg-white p-1 mx-auto shadow-md mb-2 flex items-center justify-center">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white p-1 mx-auto shadow-md mb-2 flex items-center justify-center">
             <img
               src={storeInfo.logoUrl || '/logo.png'}
               alt="Logo"
@@ -91,16 +91,16 @@ export default function AdminLoginModal({ isOpen, onClose, onLoginSuccess }) {
             />
           </div>
 
-          <h3 className="font-headline-sm text-lg font-serif font-bold text-white">
+          <h3 className="font-headline-sm text-base sm:text-lg font-serif font-bold text-white">
             Đăng Nhập Quản Trị Hệ Thống
           </h3>
-          <p className="text-xs text-emerald-100 mt-0.5">
+          <p className="text-[11px] sm:text-xs text-emerald-100 mt-0.5">
             {storeInfo.name} • Quản lý giá & nội dung
           </p>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        {/* Form Body - Scrollable when viewport is compact */}
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-3 sm:space-y-4 overflow-y-auto">
           {errorMsg && (
             <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
               <span className="material-symbols-outlined text-[18px] text-red-600 shrink-0">error</span>
@@ -121,9 +121,9 @@ export default function AdminLoginModal({ isOpen, onClose, onLoginSuccess }) {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Nhập tên đăng nhập (VD: admin)"
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl pl-10 pr-4 py-2.5 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0d631b]"
+                className="w-full bg-stone-50 border border-stone-300 rounded-xl pl-10 pr-4 py-2 sm:py-2.5 text-xs sm:text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0d631b]"
               />
-              <span className="material-symbols-outlined text-stone-400 absolute left-3 top-2.5 text-[18px]">
+              <span className="material-symbols-outlined text-stone-400 absolute left-3 top-2 sm:top-2.5 text-[18px]">
                 person
               </span>
             </div>
@@ -141,15 +141,15 @@ export default function AdminLoginModal({ isOpen, onClose, onLoginSuccess }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Nhập mật khẩu..."
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl pl-10 pr-10 py-2.5 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0d631b]"
+                className="w-full bg-stone-50 border border-stone-300 rounded-xl pl-10 pr-10 py-2 sm:py-2.5 text-xs sm:text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0d631b]"
               />
-              <span className="material-symbols-outlined text-stone-400 absolute left-3 top-2.5 text-[18px]">
+              <span className="material-symbols-outlined text-stone-400 absolute left-3 top-2 sm:top-2.5 text-[18px]">
                 lock
               </span>
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-stone-400 hover:text-stone-700 cursor-pointer"
+                className="absolute right-3 top-2 sm:top-2.5 text-stone-400 hover:text-stone-700 cursor-pointer"
                 title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
               >
                 <span className="material-symbols-outlined text-[18px]">
@@ -159,7 +159,7 @@ export default function AdminLoginModal({ isOpen, onClose, onLoginSuccess }) {
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-xs text-stone-600 pt-1">
+          <div className="flex items-center justify-between text-xs text-stone-600 pt-0.5">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -173,14 +173,14 @@ export default function AdminLoginModal({ isOpen, onClose, onLoginSuccess }) {
 
           <button
             type="submit"
-            className="w-full py-3 px-4 rounded-xl bg-[#0d631b] hover:bg-[#094713] text-white text-sm font-bold shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
+            className="w-full py-2.5 sm:py-3 px-4 rounded-xl bg-[#0d631b] hover:bg-[#094713] text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98 shrink-0"
           >
             <span className="material-symbols-outlined text-[18px]">login</span>
             <span>Xác Thực & Vào Quản Trị</span>
           </button>
 
           {/* Hint Card for Store Owner */}
-          <div className="p-3 bg-emerald-50/80 rounded-xl border border-emerald-200 text-xs space-y-1 text-stone-700">
+          <div className="p-3 bg-emerald-50/80 rounded-xl border border-emerald-200 text-xs space-y-1 text-stone-700 shrink-0">
             <div className="font-bold text-[#0d631b] flex items-center gap-1">
               <span className="material-symbols-outlined text-[16px]">info</span>
               <span>Thông tin tài khoản mặc định:</span>

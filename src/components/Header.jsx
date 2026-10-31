@@ -54,17 +54,17 @@ export default function Header({
       {/* Main Navbar */}
       <div className="h-20 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 lg:gap-3 xl:gap-4">
         {/* Brand & Logo */}
-        <a href="#hero" className="flex items-center gap-2.5 sm:gap-3 shrink-0 group cursor-pointer select-none">
+        <a href="#hero" className="flex items-center gap-2 sm:gap-2.5 shrink-0 group cursor-pointer select-none">
           <img
             alt={storeInfo.name}
-            className="h-11 sm:h-13 xl:h-14 w-auto object-contain transition-transform group-hover:scale-105 shrink-0"
+            className="h-10 sm:h-12 xl:h-14 w-auto object-contain transition-transform group-hover:scale-105 shrink-0"
             src={storeInfo.logoUrl || '/logo.png'}
           />
           <div className="hidden sm:flex flex-col justify-center min-w-0">
-            <div className="text-sm md:text-base lg:text-sm xl:text-lg text-[#0d631b] leading-tight tracking-tight font-serif font-bold whitespace-nowrap">
+            <div className="text-xs sm:text-sm md:text-base lg:text-sm xl:text-lg text-[#0d631b] leading-tight tracking-tight font-serif font-bold whitespace-nowrap">
               {storeInfo.name.toUpperCase()}
             </div>
-            <div className="text-[10px] xl:text-xs text-[#855300] tracking-wide font-semibold whitespace-nowrap leading-snug">
+            <div className="text-[10px] xl:text-xs text-[#855300] tracking-wide font-semibold whitespace-nowrap leading-snug hidden xl:block">
               {storeInfo.slogan}
             </div>
           </div>
@@ -75,7 +75,7 @@ export default function Header({
           {navLinks.map((link) => (
             <a
               key={link.name}
-              className="px-2.5 py-1.5 xl:px-3 text-[13px] xl:text-sm text-stone-700 hover:text-[#0d631b] hover:bg-stone-100 transition-colors cursor-pointer rounded-lg font-semibold whitespace-nowrap shrink-0"
+              className="px-2 py-1 xl:px-3 xl:py-1.5 text-xs xl:text-sm text-stone-700 hover:text-[#0d631b] hover:bg-stone-100 transition-colors cursor-pointer rounded-lg font-semibold whitespace-nowrap shrink-0"
               href={link.href}
             >
               {link.name}
@@ -84,7 +84,7 @@ export default function Header({
         </nav>
 
         {/* Search, Cart, Login & Actions */}
-        <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2 xl:gap-2.5 shrink-0">
           {/* Desktop Search Input (xl: 1280px+) */}
           <div className="relative hidden xl:block w-36 2xl:w-44 shrink-0">
             <input
@@ -106,7 +106,7 @@ export default function Header({
             aria-label="Tìm kiếm"
             title="Tìm kiếm loại gạo"
           >
-            <span className="material-symbols-outlined text-[22px]">search</span>
+            <span className="material-symbols-outlined text-[20px] sm:text-[22px]">search</span>
           </button>
 
           {/* Cart / Quick Order Button */}
@@ -116,28 +116,30 @@ export default function Header({
             title="Xem giỏ hàng / Đặt nhanh"
             aria-label="Giỏ hàng"
           >
-            <span className="material-symbols-outlined text-[21px] sm:text-[22px]">shopping_bag</span>
+            <span className="material-symbols-outlined text-[20px] sm:text-[22px]">shopping_bag</span>
             {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-stone-950 text-[11px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-xs animate-pulse">
+              <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-stone-950 text-[10px] sm:text-[11px] w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center font-bold shadow-xs animate-pulse">
                 {cartCount}
               </span>
             )}
           </button>
 
-          {/* Admin Login Button */}
+          {/* Admin Login Button - compact icon on mobile, full text on sm+ */}
           <button
             onClick={onOpenLogin}
-            className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-xs border active:scale-95 whitespace-nowrap shrink-0 ${
+            className={`inline-flex items-center justify-center gap-1.5 p-2 sm:px-3 sm:py-1.5 md:px-3.5 md:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-xs border active:scale-95 whitespace-nowrap shrink-0 ${
               isAuthenticated
                 ? 'bg-emerald-50 text-[#0d631b] border-emerald-300 hover:bg-emerald-100'
                 : 'bg-stone-900 hover:bg-stone-800 text-white border-stone-900'
             }`}
             title={isAuthenticated ? 'Đã đăng nhập - Mở trang quản trị' : 'Đăng nhập tài khoản quản trị'}
           >
-            <span className="material-symbols-outlined text-[17px] sm:text-[18px]">
+            <span className="material-symbols-outlined text-[18px] sm:text-[19px]">
               {isAuthenticated ? 'admin_panel_settings' : 'lock'}
             </span>
-            <span>{isAuthenticated ? 'Vào Quản Trị' : 'Đăng Nhập'}</span>
+            <span className="hidden sm:inline">
+              {isAuthenticated ? 'Vào Quản Trị' : 'Đăng Nhập'}
+            </span>
           </button>
 
           {/* Mobile Hamburger Toggle Button */}
@@ -146,7 +148,7 @@ export default function Header({
             className="lg:hidden p-2 rounded-xl text-stone-700 hover:text-[#0d631b] hover:bg-stone-100 transition-colors cursor-pointer shrink-0"
             aria-label="Mở menu"
           >
-            <span className="material-symbols-outlined text-[26px]">
+            <span className="material-symbols-outlined text-[24px] sm:text-[26px]">
               {mobileMenuOpen ? 'close' : 'menu'}
             </span>
           </button>
