@@ -9,6 +9,14 @@ import {
   B2B_CONTENT as INITIAL_B2B_CONTENT,
   WAREHOUSE_CONTENT as INITIAL_WAREHOUSE_CONTENT,
 } from '../data/riceData';
+import {
+  isSupabaseConfigured,
+  dbGetProducts,
+  dbUpsertProduct,
+  dbDeleteProduct,
+  dbGetStoreSettings,
+  dbSaveStoreSetting,
+} from '../lib/supabase';
 
 const STORAGE_KEY = 'thao_nguyen_cms_data_v2';
 
@@ -61,7 +69,7 @@ export function StoreProvider({ children }) {
     };
   });
 
-  // Save to localStorage whenever data changes
+  // Save to localStorage whenever data changes (local cache)
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -70,69 +78,152 @@ export function StoreProvider({ children }) {
     }
   }, [data]);
 
-  // Section update handlers
+  // Sync from Supabase Cloud on mount if credentials exist
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+
+    async function syncCloudData() {
+      try {
+        const [prodRes, settingsRes] = await Promise.all([
+          dbGetProducts(),
+          dbGetStoreSettings(),
+        ]);
+
+        if (prodRes.success && Array.isArray(prodRes.data) && prodRes.data.length > 0) {
+          const mappedProducts = prodRes.data.map((p) => ({
+            ...p,
+            desc: p.desc_text || p.desc,
+            imageUrl: p.image_url || p.imageUrl,
+            packagingSnippet: p.packaging_snippet || p.packagingSnippet,
+            textureBadge: p.texture_badge || p.textureBadge,
+            badgeType: p.badge_type || p.badgeType,
+            waterRatio: p.water_ratio || p.waterRatio,
+            suitableFor: p.suitable_for || p.suitableFor,
+          }));
+          setData((prev) => ({ ...prev, products: mappedProducts }));
+        }
+
+        if (settingsRes.success && settingsRes.data) {
+          setData((prev) => ({
+            ...prev,
+            ...settingsRes.data,
+          }));
+        }
+      } catch (err) {
+        console.warn('Supabase initial sync error:', err);
+      }
+    }
+
+    syncCloudData();
+  }, []);
+
+  // Section update handlers with optional cloud sync
   const updateStoreInfo = (fields) => {
-    setData((prev) => ({
-      ...prev,
-      storeInfo: { ...prev.storeInfo, ...fields },
-    }));
+    setData((prev) => {
+      const merged = { ...prev.storeInfo, ...fields };
+      if (isSupabaseConfigured()) {
+        dbSaveStoreSetting('storeInfo', merged);
+      }
+      return { ...prev, storeInfo: merged };
+    });
   };
 
   const updateHeroContent = (fields) => {
-    setData((prev) => ({
-      ...prev,
-      heroContent: { ...prev.heroContent, ...fields },
-    }));
+    setData((prev) => {
+      const merged = { ...prev.heroContent, ...fields };
+      if (isSupabaseConfigured()) {
+        dbSaveStoreSetting('heroContent', merged);
+      }
+      return { ...prev, heroContent: merged };
+    });
   };
 
   const updateTrustBadges = (newBadges) => {
-    setData((prev) => ({
-      ...prev,
-      trustBadges: newBadges,
-    }));
+    setData((prev) => {
+      if (isSupabaseConfigured()) {
+        dbSaveStoreSetting('trustBadges', newBadges);
+      }
+      return { ...prev, trustBadges: newBadges };
+    });
   };
 
   const updateSpotlightST25 = (fields) => {
-    setData((prev) => ({
-      ...prev,
-      spotlightST25: { ...prev.spotlightST25, ...fields },
-    }));
+    setData((prev) => {
+      const merged = { ...prev.spotlightST25, ...fields };
+      if (isSupabaseConfigured()) {
+        dbSaveStoreSetting('spotlightST25', merged);
+      }
+      return { ...prev, spotlightST25: merged };
+    });
   };
 
   const updateProduct = (id, fields) => {
-    setData((prev) => ({
-      ...prev,
-      products: prev.products.map((p) => (p.id === id ? { ...p, ...fields } : p)),
-    }));
+    setData((prev) => {
+      const updatedList = prev.products.map((p) => (p.id === id ? { ...p, ...fields } : p));
+      const target = updatedList.find((p) => p.id === id);
+      if (target && isSupabaseConfigured()) {
+        dbUpsertProduct({
+          id: target.id,
+          name: target.name,
+          price: target.price,
+          category: target.category,
+          badge: target.badge,
+          badge_type: target.badgeType,
+          packaging_snippet: target.packagingSnippet,
+          texture_badge: target.textureBadge,
+          desc_text: target.desc,
+          image_url: target.imageUrl,
+          origin: target.origin,
+          texture: target.texture,
+          water_ratio: target.waterRatio,
+          suitable_for: target.suitableFor,
+        });
+      }
+      return { ...prev, products: updatedList };
+    });
   };
 
   const updateProductPrice = (id, newPrice) => {
-    setData((prev) => ({
-      ...prev,
-      products: prev.products.map((p) =>
-        p.id === id ? { ...p, price: Number(newPrice) || 0 } : p
-      ),
-    }));
+    updateProduct(id, { price: Number(newPrice) || 0 });
   };
 
   const addProduct = (newProduct) => {
     const id = newProduct.id || `rice-${Date.now()}`;
+    const productObj = {
+      ...newProduct,
+      id,
+      price: Number(newProduct.price) || 20000,
+      category: newProduct.category || ['family'],
+      imageUrl: newProduct.imageUrl || '/logo.png',
+    };
+    if (isSupabaseConfigured()) {
+      dbUpsertProduct({
+        id: productObj.id,
+        name: productObj.name,
+        price: productObj.price,
+        category: productObj.category,
+        badge: productObj.badge,
+        badge_type: productObj.badgeType,
+        packaging_snippet: productObj.packagingSnippet,
+        texture_badge: productObj.textureBadge,
+        desc_text: productObj.desc,
+        image_url: productObj.imageUrl,
+        origin: productObj.origin,
+        texture: productObj.texture,
+        water_ratio: productObj.waterRatio,
+        suitable_for: productObj.suitableFor,
+      });
+    }
     setData((prev) => ({
       ...prev,
-      products: [
-        {
-          ...newProduct,
-          id,
-          price: Number(newProduct.price) || 20000,
-          category: newProduct.category || ['family'],
-          imageUrl: newProduct.imageUrl || '/logo.png',
-        },
-        ...prev.products,
-      ],
+      products: [productObj, ...prev.products],
     }));
   };
 
   const deleteProduct = (id) => {
+    if (isSupabaseConfigured()) {
+      dbDeleteProduct(id);
+    }
     setData((prev) => ({
       ...prev,
       products: prev.products.filter((p) => p.id !== id),

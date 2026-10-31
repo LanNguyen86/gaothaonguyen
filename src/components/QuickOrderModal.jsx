@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../context/StoreContext';
+import { dbCreateOrder } from '../lib/supabase';
 
 export default function QuickOrderModal({ isOpen, onClose, initialProduct, onShowToast }) {
   const { storeInfo, products, calculatorConfig } = useStore();
@@ -61,6 +62,27 @@ ${customerAddress ? `- Địa chỉ giao: ${customerAddress}` : ''}
 ${note ? `- Ghi chú: ${note}` : ''}`;
 
   const zaloOrderUrl = `https://zalo.me/${storeInfo.hotlineClean}?text=${encodeURIComponent(orderSummaryText)}`;
+
+  const handleZaloOrder = async (e) => {
+    e.preventDefault();
+    await dbCreateOrder({
+      customer_name: customerName.trim() || 'Khách liên hệ Zalo',
+      phone: customerPhone.trim() || '',
+      address: customerAddress.trim() || '',
+      rice_name: currentRice.name,
+      quantity_kg: kg,
+      unit_price: unitPrice,
+      shipping_fee: shippingFee,
+      total_price: totalPrice,
+      packaging: packagingName,
+      note: note.trim() || '',
+      status: 'pending',
+    });
+    if (onShowToast) {
+      onShowToast('Đã lưu đơn hàng vào hệ thống! Đang chuyển sang Zalo...');
+    }
+    window.open(zaloOrderUrl, '_blank');
+  };
 
   const handleCopyOrder = () => {
     navigator.clipboard.writeText(orderSummaryText);
@@ -315,15 +337,14 @@ ${note ? `- Ghi chú: ${note}` : ''}`;
 
         {/* Footer CTAs */}
         <div className="bg-stone-50 p-4 sm:p-6 border-t border-stone-200 flex flex-col sm:flex-row items-center gap-3">
-          <a
-            href={zaloOrderUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={handleZaloOrder}
             className="w-full sm:flex-1 py-3.5 px-5 rounded-xl bg-[#0d631b] hover:bg-[#094713] text-white font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer font-bold"
           >
             <span className="material-symbols-outlined text-[22px]">send</span>
             <span>Chốt Đơn Qua Zalo</span>
-          </a>
+          </button>
 
           <a
             href={`tel:${storeInfo.hotlineClean}`}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
 import AdminOverview from './AdminOverview';
+import AdminOrders from './AdminOrders';
 import AdminProducts from './AdminProducts';
 import AdminStoreInfo from './AdminStoreInfo';
 import AdminHero from './AdminHero';
@@ -40,6 +41,7 @@ export default function AdminDashboard({ onExitAdmin, onShowToast, onLogout }) {
 
   const navItems = [
     { id: 'overview', label: 'Tổng quan & Báo giá nhanh', icon: 'dashboard', color: 'text-[#0d631b]' },
+    { id: 'orders', label: 'Quản Lý Đơn Đặt Gạo', icon: 'receipt_long', color: 'text-emerald-700' },
     { id: 'products', label: 'Quản lý 13 Loại Gạo', icon: 'rice_bowl', color: 'text-amber-700' },
     { id: 'store', label: 'Thông tin Vựa Gạo & Liên hệ', icon: 'storefront', color: 'text-blue-700' },
     { id: 'hero', label: 'Banner Đầu Trang (Hero)', icon: 'view_carousel', color: 'text-purple-700' },
@@ -247,6 +249,9 @@ export default function AdminDashboard({ onExitAdmin, onShowToast, onLogout }) {
         <main className="flex-1 min-w-0">
           {activeTab === 'overview' && (
             <AdminOverview setActiveTab={setActiveTab} onShowToast={onShowToast} />
+          )}
+          {activeTab === 'orders' && (
+            <AdminOrders onShowToast={onShowToast} />
           )}
           {activeTab === 'products' && (
             <AdminProducts onShowToast={onShowToast} />
