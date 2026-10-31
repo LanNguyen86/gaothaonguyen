@@ -20,6 +20,17 @@ import {
 
 const STORAGE_KEY = 'thao_nguyen_cms_data_v2';
 
+const isValidImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return false;
+  const trimmed = url.trim();
+  if (trimmed.startsWith('data:image/')) return true;
+  if (trimmed.startsWith('/') && trimmed.length > 2) return true;
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed.length > 15 && !trimmed.includes('undefined');
+  }
+  return false;
+};
+
 const StoreContext = createContext(null);
 
 export function StoreProvider({ children }) {
@@ -50,10 +61,10 @@ export function StoreProvider({ children }) {
         const productsMerged = Array.isArray(parsed.products) && parsed.products.length > 0
           ? parsed.products.map((p) => {
               const fallbackP = INITIAL_PRODUCTS.find((ip) => ip.id === p.id);
-              const isValidImg = p.imageUrl && typeof p.imageUrl === 'string' && p.imageUrl.startsWith('http') && p.imageUrl.length > 40;
+              const isImgValid = isValidImageUrl(p.imageUrl);
               return {
                 ...p,
-                imageUrl: isValidImg ? p.imageUrl : (fallbackP?.imageUrl || '/logo.png'),
+                imageUrl: isImgValid ? p.imageUrl : (fallbackP?.imageUrl || '/logo.png'),
               };
             })
           : INITIAL_PRODUCTS;
@@ -108,11 +119,11 @@ export function StoreProvider({ children }) {
           const mappedProducts = prodRes.data.map((p) => {
             const fallbackP = INITIAL_PRODUCTS.find((ip) => ip.id === p.id);
             const rawImg = p.image_url || p.imageUrl;
-            const isValidImg = rawImg && typeof rawImg === 'string' && rawImg.startsWith('http') && rawImg.length > 40;
+            const isImgValid = isValidImageUrl(rawImg);
             return {
               ...p,
               desc: p.desc_text || p.desc || fallbackP?.desc || '',
-              imageUrl: isValidImg ? rawImg : (fallbackP?.imageUrl || '/logo.png'),
+              imageUrl: isImgValid ? rawImg : (fallbackP?.imageUrl || '/logo.png'),
               packagingSnippet: p.packaging_snippet || p.packagingSnippet || fallbackP?.packagingSnippet || '',
               textureBadge: p.texture_badge || p.textureBadge || fallbackP?.textureBadge || '',
               badgeType: p.badge_type || p.badgeType || fallbackP?.badgeType || 'default',
